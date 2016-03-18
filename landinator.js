@@ -1,11 +1,12 @@
 var COASTVAR, WIDTH, HEIGHT, GROUND, DROPOFF;
 var PHASE;
 var SETUP, GO;
+var c, BUTTON, POINTS, TOPIA, BORDER;
 
 var Country = function(points,field){
   this.points = this.orderPoints(points);
   this.field = this.genField(this.points,field);
-}
+};
 
 Country.prototype.orderPoints = function (points) {
   var tmp = points;
@@ -37,7 +38,7 @@ Country.prototype.genField = function (points,field) {
       breadth = 1;
     } else {
       breadth = COASTVAR;
-    }
+    };
     one = points[i];
     if (i===points.length-1) {
       two = points[0];
@@ -50,12 +51,12 @@ Country.prototype.genField = function (points,field) {
       tmpy = tmppt.y;
       for (var ix=floor(tmpx-(breadth/2));ix<ceil(tmpx+(breadth/2));ix++) {
         for (var iy=floor(tmpy-(breadth/2));iy<ceil(tmpy+(breadth/2));iy++) {
-          points[ix][iy] = points[ix][iy] - (DROPOFF - random(1)) - (i+j);
+          field[ix][iy] = field[ix][iy] - (DROPOFF - random(1)) - (i+j);
         };
       };
     };
   };
-  return points;
+  return field;
 };
 
 var Border = function (country,stroke) {
@@ -65,7 +66,7 @@ var Border = function (country,stroke) {
   this.current_ = this.origin;
   this.path = [];
   this.stroke = stroke;
-}
+};
 
 Border.prototype.go = function () {
   var last = [this.current_.x,this.current_.y];
@@ -95,8 +96,28 @@ Border.prototype.go = function () {
   };
   this.path.push(best.toString());
   this.current_ = createVector(best[0],best[1]);
-  stroke(this.fill);
+  stroke(this.stroke);
   point(this.x,this.y);
+};
+
+var Button = function (x,y,w,h,fill) {
+  this.x = x; this.y = y; this.w = w; this.h = h;
+  this.fill = fill;
+  this.render();
+};
+
+Button.prototype.render = function () {
+  noStroke();
+  fill(this.fill);
+  ellipse(this.x,this.y,this.w,this.h);
+};
+
+Button.prototype.isHit = function (x,y) {
+  var bigger = this.w > this.h ? this.w : this.h;
+  var loc = createVector(x,y);
+  var ori = createVector(this.x,this.y);
+  var delta = loc.dist(ori);
+  return (delta<bigger);
 };
 
 function blankField(w,h) {
@@ -108,4 +129,46 @@ function blankField(w,h) {
     };
   };
   return f;
+};
+
+function dropPoint(x,y) {
+  noStroke();
+  fill(180);
+  ellipse(x-4,y-4,4,4);
+  POINTS.push(createVector(x,y));
+};
+
+function setup () {
+  HEIGHT = 500; WIDTH = 500;
+  COASTVAR = 10; DROPOFF = 40; GROUND = 60;
+  SETUP = 0; GO = 1;
+  PHASE = SETUP;
+  POINTS = [];
+  TOPIA = null; BORDER = null;
+  c = createCanvas(WIDTH,HEIGHT);
+  c.background(50);
+  BUTTON = new Button(WIDTH-30,HEIGHT-30,15,15,color(30,180,0));
+};
+
+function draw() {
+  var x,y;
+  if (PHASE === SETUP) {
+    if (mouseIsPressed) {
+      x = mouseX; y = mouseY;
+    } else if (touchIsDown) {
+      x = touchX; y = touchY;
+    };
+    if (!mouseIsPressed && !touchIsDown) {return null;};
+    if (BUTTON.isHit(x,y)) {
+      console.log("hit");
+      PHASE = GO;
+      background(50);
+      TOPIA = new Country(POINTS,blankField(WIDTH,HEIGHT));
+      BORDER = new Border(TOPIA,color(180));
+    } else {
+      dropPoint(x,y);
+    };
+  } else if (PHASE === GO) {
+    BORDER.go();
+  };
 };
