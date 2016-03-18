@@ -1,4 +1,6 @@
 var COASTVAR, WIDTH, HEIGHT, GROUND, DROPOFF;
+var PHASE;
+var SETUP, GO;
 
 var Country = function(points,field){
   this.points = this.orderPoints(points);
@@ -42,15 +44,68 @@ Country.prototype.genField = function (points,field) {
     } else {
       two = points[i+1];
     };
-    for (var i=0;i<1.01;i+=1/one.dist(two)) {
-      tmpx = lerp(one.x,two.x,i);
-      tmpy = lerp(one.y,two.y,i);
+    for (var j=0;j<1.01;j+=1/one.dist(two)) {
+      tmppt = p5.Vector.lerp(one,two,j);
+      tmpx = tmppt.x;
+      tmpy = tmppt.y;
       for (var ix=floor(tmpx-(breadth/2));ix<ceil(tmpx+(breadth/2));ix++) {
         for (var iy=floor(tmpy-(breadth/2));iy<ceil(tmpy+(breadth/2));iy++) {
-          points[ix][iy] = points[ix][iy] - (DROPOFF - random(1));
+          points[ix][iy] = points[ix][iy] - (DROPOFF - random(1)) - (i+j);
         };
       };
     };
   };
   return points;
+};
+
+var Border = function (country,stroke) {
+  this.field = country.field;
+  this.points = country.points;
+  this.origin = this.points[0];
+  this.current_ = this.origin;
+  this.path = [];
+  this.stroke = stroke;
+}
+
+Border.prototype.go = function () {
+  var last = [this.current_.x,this.current_.y];
+  var best = [0,0];
+  var bestscore = 1000000;
+  var found = false;
+  for(var ix=-1;ix<2;ix++) {
+    for(var iy=-1;iy<2;iy++) {
+      if (ix===0 && iy===0) {continue;};
+      var curr = [last[0]+ix,last[1]+iy];
+      if (curr[0]<0 || curr[0]>this.field.length-1) {continue;};
+      if (curr[1]<0 || curr[1]>this.field[curr[0]].length-1) {continue;};
+      if (this.field[curr[0]][curr[1]] < bestscore && !this.path.includes(curr.toString())) {
+        best = curr;
+        bestscore = this.field[curr[0]][curr[1]];
+        found = true;
+      };
+    };
+  };
+  if (!found) {
+    var shots = [[-2,0],[-2,2],[-2,-2],[0,-2],[0,2],[2,0],[2,2],[2,-2]];
+    for (var i=0;i<shots.length;i++) {
+      if (!this.path.includes(shots[i].toString())) {
+        best = shots[i];
+      };
+    };
+  };
+  this.path.push(best.toString());
+  this.current_ = createVector(best[0],best[1]);
+  stroke(this.fill);
+  point(this.x,this.y);
+};
+
+function blankField(w,h) {
+  var f = [];
+  for(var ix=0;ix<w;ix++) {
+    f[ix] = [];
+    for(var iy=0;iy<h;iy++) {
+      f[ix][iy] = GROUND;
+    };
+  };
+  return f;
 };
