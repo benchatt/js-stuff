@@ -6,8 +6,11 @@ function degrees(n) {
   return (n * (180.0/Math.PI));
 }
 
+
 window.onload = function() {
   var paper = new Raphael(document.getElementById('canvas_container'),500,500);
+  var stack = [];
+  //iife to make the circles
   var palette = (function(paper) {
     var palette = [];
     var total = 8;
@@ -28,14 +31,34 @@ window.onload = function() {
       }
       var rgb = bits.join(',');
       var temp = paper.circle(x,y,40)
-                      .attr({fill: 'rgb('+rgb.toString()+')',
+                      .attr({fill: 'rgb('+ rgb +')',
                              stroke: '#333',
                              'stroke-width': 4
-                           });
+                           })
+                      .data("r",bits[0])
+                      .data("g",bits[1])
+                      .data("b",bits[2]);
       //add handlers
       temp.node.onmouseover = function () {
         this.style.cursor = 'pointer';
       };
+      temp.click(function (evt) {
+        var clone = this.clone();
+        clone.animate({cx: paper.width/2, cy: paper.height/2}, 600, "bounce");
+        stack.push(clone);
+        var tot = [0,0,0];
+        var aver = [0,0,0];
+        var arrgeebee = ['r','g','b'];
+        for (var f=0;f<tot.length;f++) {
+          for (var i=0;i<stack.length;i++) {
+            tot[f] = tot[f] + stack[i].data(arrgeebee[f]);
+          };
+          aver[f] = Math.round(tot[f]/stack.length);
+        };
+        var nrgb = aver.join(',');
+        clone.animate({fill: 'rgb('+nrgb+')'},50);
+      });
+      //temp.click(stack = cloneToCenter(this,stack););
       palette.push(temp);
     }
     return palette;
