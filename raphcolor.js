@@ -19,7 +19,7 @@ function colorMix (stack, subt) {
 
 function doClear (button) {
   button.animate({
-        "75%": {fill: '#fff', easing: "elastic"},
+        "75%": {fill: '#fff', easing: "ease-out"},
         "100%": {fill: '#cef', easing: "ease-in"}
       },100);
 }
@@ -71,7 +71,7 @@ window.onload = function() {
         var nrgb = colorMix(stack,SUBT);
         clone.animate({
           "90%": {fill: clone.attr('fill')},
-          "100%": {fill: 'rgb('+nrgb+')', easing: 'elastic'}
+          "100%": {fill: 'rgb('+nrgb+')', easing: 'ease-in'}
         },660);
       });
       //temp.click(stack = cloneToCenter(this,stack););
@@ -91,4 +91,22 @@ window.onload = function() {
                            }
                            stack = [];
                          });
+  var clearText = paper.text(70,paper.height-24,"clear")
+                       .attr({fill: "#000",
+                          'font-family': 'arial',
+                          'font-size': 24
+                      })
+                      .click(function (evt) {
+                        doClear(clearButton);
+                        for (var i=0;i<stack.length;i++) {
+                          stack[i].remove();
+                        }
+                        stack = [];
+                      });
+  clearButton.node.onmouseover = function () {
+    this.style.cursor = 'pointer';
+  };
+  clearText.node.onmouseover = function () {
+    this.style.cursor = 'pointer';
+  };
 }
