@@ -18,14 +18,12 @@ function colorMix (stack, subt) {
 }
 
 function doClear (button) {
-  button.animate({fill: '#fff'},75,"elastic",
-         resetClear(button)
-        );
+  button.animate({
+        "75%": {fill: '#fff', easing: "elastic"},
+        "100%": {fill: '#cef', easing: "ease-in"}
+      },100);
 }
 
-function resetClear (button) {
-  button.animate({fill: '#cef'},25);
-}
 window.onload = function() {
   var paper = new Raphael(document.getElementById('canvas_container'),500,500);
   var stack = [];
@@ -71,7 +69,10 @@ window.onload = function() {
         stack.push(clone);
 
         var nrgb = colorMix(stack,SUBT);
-        clone.animate({fill: 'rgb('+nrgb+')'},600);
+        clone.animate({
+          "90%": {fill: clone.attr('fill')},
+          "100%": {fill: 'rgb('+nrgb+')', easing: 'elastic'}
+        },660);
       });
       //temp.click(stack = cloneToCenter(this,stack););
       palette.push(temp);
@@ -85,5 +86,9 @@ window.onload = function() {
                          })
                          .click(function (evt) {
                            doClear(this);
+                           for (var i=0;i<stack.length;i++) {
+                             stack[i].remove();
+                           }
+                           stack = [];
                          });
 }
