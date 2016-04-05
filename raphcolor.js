@@ -24,6 +24,12 @@ function doClear (button) {
       },100);
 }
 
+function doToggle (lb,pb,s) {
+  var cols = ['#cef','#9bc'];
+  lb.animate({fill: cols[(1-s)], easing: "ease-in-out"},200);
+  pb.animate({fill: cols[s], easing: "ease-in-out"},200);
+}
+
 window.onload = function() {
   var paper = new Raphael(document.getElementById('canvas_container'),500,500);
   var stack = [];
@@ -82,7 +88,7 @@ window.onload = function() {
   var clearButton = paper.rect(20,paper.height-40,100,30,6)
                          .attr({fill: '#cef',
                                 stroke: '#222',
-                                'stroke-width': 3,
+                                'stroke-width': 3
                          })
                          .click(function (evt) {
                            doClear(this);
@@ -92,7 +98,7 @@ window.onload = function() {
                            stack = [];
                          });
   var clearText = paper.text(70,paper.height-24,"clear")
-                       .attr({fill: "#000",
+                       .attr({fill: "#222",
                           'font-family': 'arial',
                           'font-size': 24
                       })
@@ -109,4 +115,52 @@ window.onload = function() {
   clearText.node.onmouseover = function () {
     this.style.cursor = 'pointer';
   };
+
+  var lightButton = paper.rect(paper.width-180,paper.height-40,70,30,6)
+                         .attr({fill: '#cef',
+                                stroke: '#222',
+                                'stroke-width': 3
+                              });
+  var paintButton = paper.rect(paper.width-90,paper.height-40,70,30,6)
+                         .attr({fill: '#cef',
+                                stroke: '#222',
+                                'stroke-width': 3
+                              });
+  var lightText = paper.text(paper.width-145,paper.height-24,"light")
+                       .attr({fill: "#222",
+                          'font-family': 'arial',
+                          'font-size': 24
+                      })
+                      .click(function (evt) {
+                        for (var i=0;i<stack.length;i++) {
+                          stack[i].remove();
+                        }
+                        stack = [];
+                        SUBT = 0;
+                        doToggle(lightButton,paintButton,SUBT);
+                      });
+  var blank = paper.circle(paper.width/2,paper.height/2,40)
+                   .attr({fill: '#fff', stroke: '#fff'})
+                   .data('r',255).data('g',255).data('b',255);
+  var paintText = paper.text(paper.width-55,paper.height-24,"paint")
+                       .attr({fill: "#222",
+                          'font-family': 'arial',
+                          'font-size': 24
+                      })
+                      .click(function (evt) {
+                        for (var i=0;i<stack.length;i++) {
+                          stack[i].remove();
+                        }
+                        stack = [];
+                        stack.push(blank);
+                        SUBT = 1;
+                        doToggle(lightButton,paintButton,SUBT);
+                      });
+  lightText.node.onmouseover = function () {
+    this.style.cursor = 'pointer';
+  }
+  paintText.node.onmouseover = function () {
+    this.style.cursor = 'pointer';
+  }
+  doToggle(lightButton,paintButton,SUBT);
 }
