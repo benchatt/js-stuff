@@ -9,7 +9,7 @@ function colorMix (stack) {
     };
     aver[f] = Math.round(tot[f]/stack.length);
   };
-  return aver.join(',');
+  return aver;
 }
 
 function doClear (button) {
@@ -17,6 +17,10 @@ function doClear (button) {
         "10%": {fill: '#fff', easing: "linear"},
         "100%": {fill: '#cef', easing: "ease-in"}
       },100);
+  var paper = button.paper;
+  blot = paper.circle(paper.width/2,paper.height/2,80)
+              .attr({fill: '#fff',
+                    'stroke-width': 0});
 }
 
 function doToggle (lb,pb,s) {
@@ -34,6 +38,9 @@ window.onload = function() {
     var total = 8;
     var w = paper.width; var h = paper.height;
     var radstep = (2*Math.PI) / total;
+    var outers = []; var inners = [];
+    var shouter = []; var shinner = [];
+    var midx = paper.width/2; var midy = paper.height/2;
     for (var i=0;i<total;i++) {
       var bini = i.toString(2);
       var bits = bini.split('');
@@ -65,15 +72,43 @@ window.onload = function() {
         clone.data("r",this.data("r"));
         clone.data("g",this.data("g"));
         clone.data("b",this.data("b"));
-        clone.animate({cx: paper.width/2, cy: paper.height/2}, 600, "back-in");
+        clone.animate({cx: midx, cy: midy}, 600, "back-in");
         stack.push(clone);
 
-        var nrgb = colorMix(stack);
+        var rawnrgb = colorMix(stack);
+        var nrgb = rawnrgb.join(',');
         clone.animate({
           "80%": {fill: clone.attr('fill')},
           "100%": {fill: 'rgb('+nrgb+')', easing: 'ease-in'}
         },660);
+        for (var ib=0;ib<rawnrgb.length;ib++) {
+          var orgb = [ib===0 ? 255 : 0,ib===1 ? 255 : 0,ib===2 ? 255 : 0];
+          shouter[ib] = paper.circle(midx+((ib-1)*18),midy+51,8)
+                             .attr({fill: '#fff',
+                                      stroke: 'rgb('+orgb+')',
+                                      'stroke-width': 2
+                                   });
+          var radb = Math.round(8 * (rawnrgb[ib]/255));
+          shinner[ib] = paper.circle(midx+((ib-1)*18),midy+51,radb)
+                             .attr({fill: 'rgb(' + orgb + ')',
+                                      'stroke-width': 0
+                                    });
+        }
       });
+      for (var ib=0;ib<bits.length;ib++) {
+        outers[ib] = []; inners[ib] = [];
+        var orgb = [ib===0 ? 255 : 0,ib===1 ? 255 : 0,ib===2 ? 255 : 0];
+        outers[ib][i] = paper.circle(x+((ib-1)*18),y+51,8)
+                             .attr({fill: '#fff',
+                                    stroke: 'rgb('+orgb+')',
+                                    'stroke-width': 2
+                                 });
+        var radb = Math.round(8 * (bits[ib]/255));
+        inners[ib][i] = paper.circle(x+((ib-1)*18),y+51,radb)
+                             .attr({fill: 'rgb(' + orgb + ')',
+                                    'stroke-width': 0
+                                  });
+      }
       //temp.click(stack = cloneToCenter(this,stack););
       palette.push(temp);
     }
