@@ -144,4 +144,5 @@ window.onload = function() {
   clearText.node.onmouseover = function () {
     this.style.cursor = 'pointer';
   };
+  var bulb = paper.image('./skbulb.png',paper.width-120,paper.height-100,110,110);
 }
