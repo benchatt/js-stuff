@@ -26,8 +26,14 @@ var Square = function (paper,x,y,w) {
                            stroke-width: 4,
                          })
                     .click(function (evt) {
+                      //click stuff here
+                    });
+  this.occ = null;
+}
 
-                    })
+var Player = function (board) {
+  this.board = board;
+  
 }
 
 window.onload = function () {
