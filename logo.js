@@ -33,7 +33,9 @@ var Square = function (paper,x,y,w) {
 
 var Player = function (board) {
   this.board = board;
-  
+  this.loc = this.setStartLoc();
+  this.color = this.setColor();
+  this.shape = //draw an SVG path
 }
 
 window.onload = function () {
