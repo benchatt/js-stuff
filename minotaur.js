@@ -116,19 +116,6 @@ var Player = function (number) {
   this.number = number;
 }
 
-var Turn = function (player,state) {
-  var INIT_WALL = 0; //placement of initial walls
-  var INIT_PLAYER = 1; //placement of players on their rows/cols
-  var SELECT_PLAYER = 2; //choose which player moves
-  var MOVE_PLAYER = 3; //move player, prep to move Minotaur
-  var MOVE_MINOTAUR = 4; //move Minotaur
-  var MOVE_ESCAPE = 5; //Minotaur is dead, move to escape
-  var GAME_OVER = 6;
-  var SUCCESS = 7;
-  this.player = player;
-  this.state = state;
-}
-
 var Session = function (nplayers,size) {
   this.n = nplayers;
   this.board = new Board(size);
@@ -148,6 +135,34 @@ Session.prototype.setPlayers = function () {
 
 Session.prototype.start = function () {
   //run through the phases in order
+  var PLAYER_WALLS = Math.ceil(21/this.n);
+  this.playersSetWalls(PLAYER_WALLS);
+  this.initializePlayers();
+  var RANDOM_WALLS = 41 - PLAYER_WALLS;
+  this.rollForWalls(RANDOM_WALLS);
+  var MINOTAURS = 2;
+  this.initializeMinotaurs(MINOTAURS);
+  var PLAYER_MOVES = this.n;
+  this.turnStates();
+};
+
+Session.prototype.playersSetWalls = function (nwalls) {
+  for (var i=0;i<nwalls;i++) {
+    //output that player (i%4)+1 is up
+    //accept a click from player
+    //identify the Border object and toggleWall
+  };
+  return true;
+};
+
+Session.prototype.initializePlayers = function () {
+  for (var i=0;i<this.n;i++) {
+    var place = Math.ceil(Math.random(10));
+    //find x,y based on player number
+    //check collisions
+    //set player's x,y
+    //^^also sets correct token to Space object
+  }
 };
 
 window.onload = function () {
