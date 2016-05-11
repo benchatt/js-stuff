@@ -66,6 +66,7 @@ var Border = function(x,y,ori) {
 
 Border.prototype.toggleWall= function () {
   this.walled = !this.walled;
+  //change color
 };
 
 Border.prototype.create = function () {
@@ -163,6 +164,60 @@ Session.prototype.initializePlayers = function () {
     //set player's x,y
     //^^also sets correct token to Space object
   }
+  for (var i=this.n;i<4;i++) {
+    this.initializeAmulet(i);
+  }
+};
+
+Session.prototype.initializeAmulet = function (id) {
+  //find x,y based on id
+  //check collisions
+  //set amulet x,y
+  var newtoken = new Token("amulet",x,y,this.board);
+  //newtoken.set a bunch of stuff
+  this.amulets.push(newtoken);
+};
+
+Session.prototype.rollForWalls = function (nwalls) {
+  for (var i=0;i<nwalls;i++) {
+    var ori=0; var x=0; var y=0;
+    do {
+      ori = Math.round(Math.random());
+      if (ori===0) {
+        x = Math.floor(Math.random(this.board.size+2));
+        y = Math.floor(Math.random(this.board.size+1));
+      } else {
+        x = Math.floor(Math.random(this.board.size+1));
+        y = Math.floor(Math.random(this.board.size+2));
+      }
+    } while (this.board.borders[ori][x][y].walled);
+    this.board.borders[ori][x][y].toggleWall();
+  }
+};
+
+Session.prototype.initializeMinotaurs = function (nminos) {
+  for (var i=0;i<nminos;i++) {
+    x = Math.floor(Math.random(this.board.size+1));
+    y = Math.floor(Math.random(this.board.size+1));
+    if (this.board.spaces[x][y].occ === null) {
+      this.minotaurs.push(new Minotaur(x,y));
+    }
+  }
+};
+
+Session.prototype.turnStates = function () {
+  //players' turn
+  //during each move, check for:
+    //collision
+    //full unity
+    //win condition
+  //minos' turn
+  //each mino rolls the d4.
+  //check to see if wall directly in that direction, if so re-roll
+  //roll d10
+  //go as many open spaces as possible
+  //check collisions
+  //check for lose condition
 };
 
 window.onload = function () {
