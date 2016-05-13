@@ -113,11 +113,22 @@ Minotaur.prototype.create = function () {
 
 };
 
-var Player = function (number) {
+var Player = function (number,session) {
   this.number = number;
+  this.session = session;
 }
 
-var Session = function (nplayers,size) {
+Player.prototype.move = function (x,y) {
+  this.location = [x,y];
+};
+
+Player.prototype.showAvailableMoves = function () {
+  //highlight Spaces that are available moves.
+  //add onclicks that point to a "move" function of player instance
+};
+
+var Session = function (nplayers,size,paper) {
+  this.paper = paper;
   this.n = nplayers;
   this.board = new Board(size);
   this.players = [];
@@ -128,7 +139,7 @@ var Session = function (nplayers,size) {
 
 Session.prototype.setPlayers = function () {
   for (var i=0;i<this.n;i++) {
-    this.players.push(new Player(i));
+    this.players.push(new Player(i,this));
   }
   //colors
   //random start locations
@@ -144,7 +155,7 @@ Session.prototype.start = function () {
   var MINOTAURS = 2;
   this.initializeMinotaurs(MINOTAURS);
   var PLAYER_MOVES = this.n;
-  this.turnStates();
+  this.turnStates(PLAYER_MOVES);
 };
 
 Session.prototype.playersSetWalls = function (nwalls) {
@@ -205,8 +216,9 @@ Session.prototype.initializeMinotaurs = function (nminos) {
   }
 };
 
-Session.prototype.turnStates = function () {
+Session.prototype.turnStates = function (m) {
   //players' turn
+  this.allowMoves(m);
   //during each move, check for:
     //collision
     //full unity
@@ -220,11 +232,18 @@ Session.prototype.turnStates = function () {
   //check for lose condition
 };
 
+Session.prototype.allowMoves = function (m) {
+  for (var i=0;i<this.n;i++) {
+    this.player[i].showAvailableMoves();
+  };
+
+};
+
 window.onload = function () {
   var SIZE = 10;
   var SQUARE_SIZE = 40;
   var paper = new Raphael(document.getElementById('canvas_container'),500,500);
   //set graphic: ask how many players
-  sesh = new Session(nplayers, SIZE);
+  sesh = new Session(nplayers, SIZE, paper);
   sesh.start();
 }
