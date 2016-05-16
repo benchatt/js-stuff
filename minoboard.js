@@ -1,6 +1,6 @@
 var Board = function(size,paper) {
   var SIDE = 35;
-  var PAD = 10;
+  var PAD = 12;
 
   this.side = SIDE;
   this.pad = PAD;
@@ -35,7 +35,7 @@ Board.prototype.createSpace = function (x,y) {
 };
 
 Board.prototype.createBorders = function (x,y) {
-  if (this.borders[0][x] !== undefined && y<this.size) 
+  if (this.borders[0][x] !== undefined && y<this.size)
     {this.borders[0][x][y] = new Border(x,y,0,this);}
   if (this.borders[1][x] !== undefined) {this.borders[1][x][y] = new Border(x,y,1,this);}
 };
@@ -97,8 +97,8 @@ Border.prototype.create = function () {
     var spath = "M"+xoffset.toString()+" "+yoffset.toString()+"L"+xoffset.toString()+
                 " "+(yoffset+this.side).toString();
     this.board.paper.path(spath)
-              .attr({stroke:"966",
-                     'stroke-width': 2
+              .attr({stroke:'aca',
+                     'stroke-width': 3
               });
   } else {
     var xoffset = (this.x * (this.side + this.pad)) + this.pad;
@@ -106,8 +106,8 @@ Border.prototype.create = function () {
     var spath = "M"+xoffset.toString()+" "+yoffset.toString()+"L"+
                 (xoffset+this.side).toString()+" "+yoffset.toString();
     this.board.paper.path(spath)
-              .attr({stroke:"966",
-                     'stroke-width': 2
+              .attr({stroke:'aca',
+                     'stroke-width': 3
               });
   }
 };
